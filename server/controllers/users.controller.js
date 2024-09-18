@@ -3,6 +3,8 @@ import { uploadOnCloudinary } from "../utils/cloudinary.util.js";
 
 import bcrypt from "bcryptjs";
 
+import jwt from "jsonwebtoken";
+
 const signUp = async (req, res) => {
   try {
     const { fullName, email, phoneNo, password } = req.body;
@@ -53,4 +55,47 @@ const signUp = async (req, res) => {
   }
 };
 
-export { signUp };
+const signIn = async (req, res) => {
+  try {
+    // Get data from frontend eg. email, password
+    // Check if user is not signed up yet so give error back that first signup
+    // We know that the user exists than we get data of user through email
+    // Then we compare the password from the database hashed password
+    // If the password is wrong then we return the error message ie. "Invalid password"
+    // If matched then we generate a jwt token and send it to the user
+
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      throw new Error("User does not exist!");
+    }
+
+    const isMatch = bcrypt.compareSync(password, user.password);
+
+    if (!isMatch) {
+      throw new Error("Invalid password!");
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    res.json({
+      message: "User signed in successfully!",
+      token,
+      user,
+      success: true,
+    });
+  } catch (error) {
+    res.status(401).json({
+      message: error.message,
+      error: true,
+      succes: false,
+    });
+  }
+};
+
+export { signUp, signIn };
