@@ -5,6 +5,7 @@ import connectDb from "./config/connectDB.js";
 
 import userRoutes from "./routes/user.routes.js";
 import companyRoutes from "./routes/company.routes.js";
+import categoryRoutes from "./routes/category.routes.js";
 
 const app = express();
 const port = process.env.PORT;
@@ -18,6 +19,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/company", companyRoutes);
+app.use("/api/v1/category", categoryRoutes);
 
 connectDb()
   .then(() => {
