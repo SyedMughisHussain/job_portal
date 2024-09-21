@@ -2,6 +2,24 @@ import { uploadOnCloudinary } from "../utils/cloudinary.util.js";
 
 import Company from "../models/company.model.js";
 
+const getAllCompany = async (req, res) => {
+  try {
+    const companies = await Company.find();
+
+    res.status(200).json({
+      message: "Companies fetched successfully!",
+      companies,
+      success: true,
+    });
+  } catch (error) {
+    res.status(404).json({
+      message: error.message,
+      error: true,
+      success: false,
+    });
+  }
+};
+
 const createCompany = async (req, res) => {
   try {
     const { name, description, websiteLink, location } = req.body;
@@ -95,4 +113,4 @@ const editCompany = async (req, res) => {
   }
 };
 
-export { createCompany, editCompany };
+export { createCompany, editCompany, getAllCompany };
